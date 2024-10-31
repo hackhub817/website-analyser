@@ -46,45 +46,6 @@ def validate_key():
     except Exception as e:
         return jsonify({"status": "invalid", "error": str(e)}), 400
 
-# @app.route('/api/analyze', methods=['POST'])
-# def analyze():
-#     global task_progress
-#     task_progress = 0
-#     data = request.json
-#     url = data['url']
-#     api_key = data['api_key']
-#     logging.info(f"Received URL for analysis: {url}")
-
-#     try:
-#         openai.api_key = api_key
-#         # Capture screenshot and HTML content
-#         task_progress = 10
-#         screenshot_path, html_content = capture_screenshot(url)
-        
-#         task_progress = 30  # Update progress after capturing the screenshot
-        
-#         # Perform analysis
-#         task_progress = 50
-#         analysis_results = perform_analysis(screenshot_path, html_content)
-        
-#         task_progress = 80  # Update progress after analysis completion
-        
-#         # Convert to markdown
-#         task_progress = 90
-#         markdown_content = convert_to_markdown(analysis_results)
-        
-#         task_progress = 100
-        
-#         logging.info(markdown_content)
-
-#         logging.info("Analysis completed successfully")
-#         return jsonify({
-#             'analysis_results': analysis_results,
-#             'markdown_content': markdown_content
-#         })
-#     except Exception as e:
-#         logging.error(f"Error during analysis: {e}")
-#         return jsonify({"error": str(e)}), 500
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
     global task_progress
@@ -124,6 +85,51 @@ def analyze():
     except Exception as e:
         logging.error(f"Error during analysis: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+
+
+
+
+# @app.route('/api/analyze', methods=['POST'])
+# def analyze():
+#     global task_progress
+#     task_progress = 0
+#     data = request.json
+#     url = data['url']
+#     api_key = data['api_key']
+#     logging.info(f"Received URL for analysis: {url}")
+
+#     try:
+#         openai.api_key = api_key
+#         # Capture screenshot and HTML content
+#         task_progress = 10
+#         screenshot_path, html_content = capture_screenshot(url)
+        
+#         task_progress = 30  # Update progress after capturing the screenshot
+        
+#         # Perform analysis
+#         task_progress = 50
+#         analysis_results = perform_analysis(screenshot_path, html_content)
+        
+#         task_progress = 80  # Update progress after analysis completion
+        
+#         # Convert to markdown
+#         task_progress = 90
+#         markdown_content = convert_to_markdown(analysis_results)
+        
+#         task_progress = 100
+        
+#         logging.info(markdown_content)
+
+#         logging.info("Analysis completed successfully")
+#         return jsonify({
+#             'analysis_results': analysis_results,
+#             'markdown_content': markdown_content
+#         })
+#     except Exception as e:
+#         logging.error(f"Error during analysis: {e}")
+#         return jsonify({"error": str(e)}), 500
 
 @app.route('/progress', methods=['GET'])
 def progress():
