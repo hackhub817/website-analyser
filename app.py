@@ -46,6 +46,63 @@ def validate_key():
     except Exception as e:
         return jsonify({"status": "invalid", "error": str(e)}), 400
 
+# @app.route('/api/analyze', methods=['POST'])
+# def analyze():
+#     global task_progress
+#     task_progress = 0
+#     data = request.json
+#     url = data['url']
+#     api_key = data['api_key']
+#     logging.info(f"Received URL for analysis: {url}")
+
+#     try:
+#         openai.api_key = api_key
+#         # Capture screenshot and HTML content
+#         task_progress = 10
+#         screenshot_path, html_content = capture_screenshot(url)
+        
+#         task_progress = 30  # Update progress after capturing the screenshot
+        
+#         # Perform analysis
+#         task_progress = 50
+#         analysis_results = perform_analysis(screenshot_path, html_content)
+        
+#         task_progress = 80  # Update progress after analysis completion
+        
+#         # Convert to markdown
+#         task_progress = 90
+#         markdown_content = convert_to_markdown(analysis_results)
+        
+#         task_progress = 100
+        
+#         logging.info(markdown_content)
+
+#         logging.info("Analysis completed successfully")
+#         return jsonify({
+#             'analysis_results': analysis_results,
+#             'markdown_content': markdown_content
+#         })
+#     except Exception as e:
+#         logging.error(f"Error during analysis: {e}")
+#         return jsonify({"error": str(e)}), 500
+
+def ensure_playwright_browsers():
+    # Check if Chromium is installed; install if missing
+    if not os.path.exists("/opt/render/.cache/ms-playwright/chromium-1140/chrome-linux/chrome"):
+        os.system("playwright install chromium")
+        os.system("playwright install-deps")
+
+def capture_screenshot(url):
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        page.goto(url)
+        screenshot_path = "screenshot.png"
+        page.screenshot(path=screenshot_path)
+        html_content = page.content()
+        browser.close()
+    return screenshot_path, html_content
+
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
     global task_progress
@@ -57,35 +114,46 @@ def analyze():
 
     try:
         openai.api_key = api_key
+
+        # Ensure Playwright and Chromium are ready
+        ensure_playwright_browsers()
+
         # Capture screenshot and HTML content
         task_progress = 10
         screenshot_path, html_content = capture_screenshot(url)
         
         task_progress = 30  # Update progress after capturing the screenshot
-        
-        # Perform analysis
+
+        # Perform analysis (mocked function for example purposes)
         task_progress = 50
         analysis_results = perform_analysis(screenshot_path, html_content)
         
         task_progress = 80  # Update progress after analysis completion
-        
-        # Convert to markdown
+
+        # Convert to markdown (mocked function for example purposes)
         task_progress = 90
         markdown_content = convert_to_markdown(analysis_results)
-        
+
         task_progress = 100
         
         logging.info(markdown_content)
-
         logging.info("Analysis completed successfully")
+        
         return jsonify({
             'analysis_results': analysis_results,
             'markdown_content': markdown_content
         })
+
     except Exception as e:
         logging.error(f"Error during analysis: {e}")
         return jsonify({"error": str(e)}), 500
 
+# Mock functions for `perform_analysis` and `convert_to_markdown` (replace with actual implementations)
+def perform_analysis(screenshot_path, html_content):
+    return {"summary": "Analysis summary", "details": "Detailed analysis"}
+
+def convert_to_markdown(analysis_results):
+    return "# Analysis Results\n\n" + analysis_results["summary"]
 
 
 
