@@ -65,6 +65,7 @@ def analyze():
         openai.api_key = api_key
         # Capture screenshot and HTML content
         ensure_playwright_browsers()
+        logging.info(f"Received URL for ana")
         task_progress = 10
         screenshot_path, html_content = capture_screenshot(url)
         
