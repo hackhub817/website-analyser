@@ -106,6 +106,7 @@ def progress():
     global task_progress
     return jsonify({'progress': task_progress})
 
+
 def capture_screenshot(url):
     screenshot_path = 'screenshot.png'
     chrome_options = Options()
@@ -114,8 +115,8 @@ def capture_screenshot(url):
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--window-size=1920,1080")
 
-    # Specify the path to the Chrome binary if necessary
-    chrome_options.binary_location = 'C:\Program Files\Google\Chrome\Application\chrome.exe'  # Update this path if needed
+    # Specify the correct path to the Chrome binary
+    chrome_options.binary_location = r'C:\Program Files\Google\Chrome\Application\chrome.exe'  # Adjust this if needed
 
     # Initialize the WebDriver using ChromeDriverManager
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
@@ -145,6 +146,7 @@ def capture_screenshot(url):
         logging.info("Chrome WebDriver closed.")
 
     return screenshot_path, html_content
+
 
 
 # def capture_screenshot(url):
