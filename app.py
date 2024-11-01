@@ -117,7 +117,10 @@ def capture_screenshot(url):
         page.set_viewport_size({"width": 1920, "height": total_height})
         page.wait_for_timeout(2000)
         logging.info(f"screenshot5 {screenshot_path}")
-        page.screenshot(path=screenshot_path, full_page=True , timeout=320000)
+        try:
+         page.screenshot(path=screenshot_path, full_page=True, timeout=320000)
+        except Exception as e:
+         logging.error(f"Screenshot error: {e}")
         logging.info("screenshot7")
         html_content = page.content()
         logging.info("screenshot8")
