@@ -46,10 +46,10 @@ def validate_key():
     except Exception as e:
         return jsonify({"status": "invalid", "error": str(e)}), 400
 
-def ensure_playwright_browsers():
-    # Check if Chromium is installed; install if missing
-    if not os.path.exists("/opt/render/.cache/ms-playwright/chromium-1140/chrome-linux/chrome"):
-        os.system("playwright install chromium")   
+# def ensure_playwright_browsers():
+#     # Check if Chromium is installed; install if missing
+#     if not os.path.exists("/opt/render/.cache/ms-playwright/chromium-1140/chrome-linux/chrome"):
+#         os.system("playwright install chromium")   
 
 
 @app.route('/api/analyze', methods=['POST'])
@@ -64,7 +64,7 @@ def analyze():
     try:
         openai.api_key = api_key
         # Capture screenshot and HTML content
-        ensure_playwright_browsers()
+        # ensure_playwright_browsers()
         logging.info(f"Received URL for ana")
         task_progress = 10
         screenshot_path, html_content = capture_screenshot(url)
@@ -118,7 +118,9 @@ def capture_screenshot(url):
         page.wait_for_timeout(2000)
         logging.info("screenshot5")
         page.screenshot(path=screenshot_path, full_page=True , timeout=60000)
+        logging.info("screenshot7")
         html_content = page.content()
+        logging.info("screenshot8")
         browser.close()
 
     logging.info(f"Screenshot captured: {screenshot_path}")
