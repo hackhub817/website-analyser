@@ -3,14 +3,20 @@ import os
 import signal
 import subprocess
 import logging
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 from flask import Flask, request, jsonify, render_template, session
-from playwright.sync_api import sync_playwright
+# from playwright.sync_api import sync_playwright
 import openai
 import base64
 from bs4 import BeautifulSoup
 import requests
 from dotenv import load_dotenv
 import json
+
 
 
 # Load environment variables from .env file
@@ -102,44 +108,83 @@ def progress():
 
 def capture_screenshot(url):
     screenshot_path = 'screenshot.png'
-    
-    with sync_playwright() as playwright:
-        logging.info("screenshot")
-        browser = playwright.chromium.launch(headless=True)
-        logging.info("screenshot1")
-        page = browser.new_page()
-        logging.info("screenshot2")
-        page.goto(url)
-        page.wait_for_load_state("networkidle")  # Ensures full page load
-        logging.info("screenshot3")
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--window-size=1920,1080")
 
-        page.set_viewport_size({"width": 1920, "height": 1080})
-        total_height = page.evaluate("document.body.scrollHeight")
-        page.set_viewport_size({"width": 1920, "height": total_height})
-        page.wait_for_timeout(2000)  # Adjust timeout as needed
-        logging.info(f"screenshot5 {screenshot_path}")
+    # Initialize the WebDriver using ChromeDriverManager
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    logging.info("Chrome WebDriver initialized.")
 
-        try:
-            # Retry mechanism
-            for attempt in range(3):
-                try:
-                    page.screenshot(path=screenshot_path, full_page=True, timeout=30000)  # Increased timeout
-                    break
-                except Exception as e:
-                    logging.error(f"Screenshot attempt {attempt + 1} failed: {e}")
-                    if attempt == 2:  # Final attempt
-                        raise
-                    page.wait_for_timeout(5000)  # Wait before retrying
-        except Exception as e:
-            logging.error(f"Screenshot error: {e}")
-        
-        logging.info("screenshot7")
-        html_content = page.content()
-        logging.info("screenshot8")
-        browser.close()
+    try:
+        driver.get(url)
+        logging.info("Page loaded.")
 
-    logging.info(f"Screenshot captured: {screenshot_path}")
+        # Wait for the page to load completely
+        time.sleep(2)  # Adjust this based on page loading time
+        total_height = driver.execute_script("return document.body.scrollHeight")
+        driver.set_window_size(1920, total_height)
+
+        # Capture screenshot
+        driver.save_screenshot(screenshot_path)
+        logging.info(f"Screenshot saved at {screenshot_path}")
+
+        # Capture HTML content
+        html_content = driver.page_source
+        logging.info("HTML content captured.")
+
+    except Exception as e:
+        logging.error(f"Error capturing screenshot: {e}")
+    finally:
+        driver.quit()
+        logging.info("Chrome WebDriver closed.")
+
     return screenshot_path, html_content
+
+
+
+# def capture_screenshot(url):
+#     screenshot_path = 'screenshot.png'
+    
+#     with sync_playwright() as playwright:
+#         logging.info("screenshot")
+#         browser = playwright.chromium.launch(headless=True)
+#         logging.info("screenshot1")
+#         page = browser.new_page()
+#         logging.info("screenshot2")
+#         page.goto(url)
+#         page.wait_for_load_state("networkidle")  # Ensures full page load
+#         logging.info("screenshot3")
+
+#         page.set_viewport_size({"width": 1920, "height": 1080})
+#         total_height = page.evaluate("document.body.scrollHeight")
+#         page.set_viewport_size({"width": 1920, "height": total_height})
+#         page.wait_for_timeout(2000)  # Adjust timeout as needed
+#         logging.info(f"screenshot5 {screenshot_path}")
+
+#         try:
+#             # Retry mechanism
+#             for attempt in range(3):
+#                 try:
+#                     page.screenshot(path=screenshot_path, full_page=True, timeout=30000)  # Increased timeout
+#                     break
+#                 except Exception as e:
+#                     logging.error(f"Screenshot attempt {attempt + 1} failed: {e}")
+#                     if attempt == 2:  # Final attempt
+#                         raise
+#                     page.wait_for_timeout(5000)  # Wait before retrying
+#         except Exception as e:
+#             logging.error(f"Screenshot error: {e}")
+        
+#         logging.info("screenshot7")
+#         html_content = page.content()
+#         logging.info("screenshot8")
+#         browser.close()
+
+#     logging.info(f"Screenshot captured: {screenshot_path}")
+#     return screenshot_path, html_content
 
 
 
