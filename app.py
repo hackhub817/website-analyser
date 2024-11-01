@@ -110,17 +110,29 @@ def capture_screenshot(url):
         page = browser.new_page()
         logging.info("screenshot2")
         page.goto(url)
+        page.wait_for_load_state("networkidle")  # Ensures full page load
         logging.info("screenshot3")
+
         page.set_viewport_size({"width": 1920, "height": 1080})
-        logging.info("screenshot4")
         total_height = page.evaluate("document.body.scrollHeight")
         page.set_viewport_size({"width": 1920, "height": total_height})
-        page.wait_for_timeout(2000)
+        page.wait_for_timeout(2000)  # Adjust timeout as needed
         logging.info(f"screenshot5 {screenshot_path}")
+
         try:
-         page.screenshot(path=screenshot_path, full_page=True, timeout=12000)
+            # Retry mechanism
+            for attempt in range(3):
+                try:
+                    page.screenshot(path=screenshot_path, full_page=True, timeout=30000)  # Increased timeout
+                    break
+                except Exception as e:
+                    logging.error(f"Screenshot attempt {attempt + 1} failed: {e}")
+                    if attempt == 2:  # Final attempt
+                        raise
+                    page.wait_for_timeout(5000)  # Wait before retrying
         except Exception as e:
-         logging.error(f"Screenshot error: {e}")
+            logging.error(f"Screenshot error: {e}")
+        
         logging.info("screenshot7")
         html_content = page.content()
         logging.info("screenshot8")
@@ -128,6 +140,37 @@ def capture_screenshot(url):
 
     logging.info(f"Screenshot captured: {screenshot_path}")
     return screenshot_path, html_content
+
+
+
+# def capture_screenshot(url):
+#     screenshot_path = 'screenshot.png'
+    
+#     with sync_playwright() as playwright:
+#         logging.info("screenshot")
+#         browser = playwright.chromium.launch(headless=True)
+#         logging.info("screenshot1")
+#         page = browser.new_page()
+#         logging.info("screenshot2")
+#         page.goto(url)
+#         logging.info("screenshot3")
+#         page.set_viewport_size({"width": 1920, "height": 1080})
+#         logging.info("screenshot4")
+#         total_height = page.evaluate("document.body.scrollHeight")
+#         page.set_viewport_size({"width": 1920, "height": total_height})
+#         page.wait_for_timeout(2000)
+#         logging.info(f"screenshot5 {screenshot_path}")
+#         try:
+#          page.screenshot(path=screenshot_path, full_page=True, timeout=12000)
+#         except Exception as e:
+#          logging.error(f"Screenshot error: {e}")
+#         logging.info("screenshot7")
+#         html_content = page.content()
+#         logging.info("screenshot8")
+#         browser.close()
+
+#     logging.info(f"Screenshot captured: {screenshot_path}")
+#     return screenshot_path, html_content
 
 def encode_image(image_path):
     """
