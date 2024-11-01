@@ -117,22 +117,26 @@ def analyze():
 
         # Ensure Playwright and Chromium are ready
         ensure_playwright_browsers()
+        logging.info(f"ensure_playwright_browsers taken")
 
         # Capture screenshot and HTML content
         task_progress = 10
         screenshot_path, html_content = capture_screenshot(url)
+        logging.info(f"Screenshot taken")
         
         task_progress = 30  # Update progress after capturing the screenshot
 
         # Perform analysis (mocked function for example purposes)
         task_progress = 50
         analysis_results = perform_analysis(screenshot_path, html_content)
+        logging.info(f" perform_analysis")
         
         task_progress = 80  # Update progress after analysis completion
 
         # Convert to markdown (mocked function for example purposes)
         task_progress = 90
         markdown_content = convert_to_markdown(analysis_results)
+        logging.info(f"convert_to_markdown")
 
         task_progress = 100
         
