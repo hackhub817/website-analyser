@@ -49,8 +49,7 @@ def validate_key():
 def ensure_playwright_browsers():
     # Check if Chromium is installed; install if missing
     if not os.path.exists("/opt/render/.cache/ms-playwright/chromium-1140/chrome-linux/chrome"):
-        os.system("playwright install chromium")
-        os.system("playwright install-deps")      
+        os.system("playwright install chromium")   
 
 
 @app.route('/api/analyze', methods=['POST'])
