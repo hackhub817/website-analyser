@@ -48,8 +48,9 @@ def validate_key():
 
 def ensure_playwright_browsers():
     # Check if Chromium is installed; install if missing
-          os.system("playwright install ")
-        
+    if not os.path.exists("/opt/render/.cache/ms-playwright/chromium-1140/chrome-linux/chrome"):
+        os.system("playwright install chromium")
+        os.system("playwright install-deps")      
 
 
 @app.route('/api/analyze', methods=['POST'])
@@ -68,6 +69,7 @@ def analyze():
         logging.info(f"Received URL for ana")
         task_progress = 10
         screenshot_path, html_content = capture_screenshot(url)
+        logging.info(f"done ana")
         
         task_progress = 30  # Update progress after capturing the screenshot
         
@@ -101,18 +103,22 @@ def progress():
 
 def capture_screenshot(url):
     screenshot_path = 'screenshot.png'
-
+    logging.info("Analysis complete")
     with sync_playwright() as playwright:
+        logging.info("screenshot")
         browser = playwright.chromium.launch(headless=True)
+        logging.info("screenshot1")
         page = browser.new_page()
+        logging.info("screenshot2")
         page.goto(url)
+        logging.info("screenshot3")
         page.set_viewport_size({"width": 1920, "height": 1080})
-
+        logging.info("screenshot4")
         total_height = page.evaluate("document.body.scrollHeight")
         page.set_viewport_size({"width": 1920, "height": total_height})
         page.wait_for_timeout(2000)
-
-        page.screenshot(path=screenshot_path, full_page=True)
+        logging.info("screenshot5")
+        page.screenshot(path=screenshot_path, full_page=True , timeout=60000)
         html_content = page.content()
         browser.close()
 
