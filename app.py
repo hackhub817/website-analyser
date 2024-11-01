@@ -118,7 +118,7 @@ def capture_screenshot(url):
         page.wait_for_timeout(2000)
         logging.info(f"screenshot5 {screenshot_path}")
         try:
-         page.screenshot(path=screenshot_path, full_page=True, timeout=320000)
+         page.screenshot(path=screenshot_path, full_page=True, timeout=12000)
         except Exception as e:
          logging.error(f"Screenshot error: {e}")
         logging.info("screenshot7")
