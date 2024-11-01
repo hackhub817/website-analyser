@@ -46,6 +46,12 @@ def validate_key():
     except Exception as e:
         return jsonify({"status": "invalid", "error": str(e)}), 400
 
+def ensure_playwright_browsers():
+    # Check if Chromium is installed; install if missing
+          os.system("playwright install ")
+        
+
+
 @app.route('/api/analyze', methods=['POST'])
 def analyze():
     global task_progress
@@ -58,6 +64,7 @@ def analyze():
     try:
         openai.api_key = api_key
         # Capture screenshot and HTML content
+        ensure_playwright_browsers()
         task_progress = 10
         screenshot_path, html_content = capture_screenshot(url)
         
