@@ -102,10 +102,10 @@ def progress():
 
 def capture_screenshot(url):
     screenshot_path = 'screenshot.png'
-    logging.info("Analysis complete")
+    
     with sync_playwright() as playwright:
         logging.info("screenshot")
-        browser = playwright.chromium.launch(headless=True, args=["--no-sandbox"])
+        browser = playwright.chromium.launch(headless=True)
         logging.info("screenshot1")
         page = browser.new_page()
         logging.info("screenshot2")
@@ -117,7 +117,7 @@ def capture_screenshot(url):
         page.set_viewport_size({"width": 1920, "height": total_height})
         page.wait_for_timeout(2000)
         logging.info(f"screenshot5 {screenshot_path}")
-        page.screenshot(path=screenshot_path, full_page=True , timeout=120000)
+        page.screenshot(path=screenshot_path, full_page=True , timeout=320000)
         logging.info("screenshot7")
         html_content = page.content()
         logging.info("screenshot8")
