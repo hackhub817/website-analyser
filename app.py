@@ -116,7 +116,8 @@ def capture_screenshot(url):
     chrome_options.add_argument("--window-size=1920,1080")
 
     # Specify the correct path to the Chrome binary
-    chrome_options.binary_location = r'C:\Program Files\Google\Chrome\Application\chrome.exe'  # Adjust this if needed
+    
+    # chrome_options.binary_location = 'C:\Program Files\Google\Chrome\Application\chrome.exe'  # Adjust this if needed
 
     # Initialize the WebDriver using ChromeDriverManager
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
